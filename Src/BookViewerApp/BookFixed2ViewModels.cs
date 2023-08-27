@@ -37,13 +37,29 @@ namespace BookViewerApp.BookFixed2ViewModels
         private System.Windows.Input.ICommand _GoNextBookCommand;
         private System.Windows.Input.ICommand _GoPreviousBookCommand;
 
-        public Commands.ICommandEventRaiseable PageVisualAddCommand { get {return _PageVisualAddCommand = _PageVisualAddCommand?? new Commands.PageVisualAddCommand(this); } }
-        public Commands.ICommandEventRaiseable PageVisualSetCommand { get { return _PageVisualSetCommand = _PageVisualSetCommand ?? new Commands.PageVisualSetCommand(this); } }
-        public Commands.ICommandEventRaiseable PageVisualMaxCommand { get { return _PageVisualMaxCommand = _PageVisualMaxCommand ?? new Commands.PageVisualMaxCommand(this); } }
-        public Commands.ICommandEventRaiseable SwapReverseCommand { get { return _SwapReverseCommand = _SwapReverseCommand ?? new Commands.CommandBase((a)=> { return true; },(a)=> { this.Reversed = !this.Reversed; }); } }
-        public Commands.ICommandEventRaiseable AddCurrentPageToBookmarkCommand { get { return _AddCurrentPageToBookmarkCommand = _AddCurrentPageToBookmarkCommand ?? new Commands.AddCurrentPageToBookmark(this); } }
-        public System.Windows.Input.ICommand GoNextBookCommand { get { return _GoNextBookCommand = _GoNextBookCommand ?? new Commands.AddNumberToSelectedBook(this, 1); } }
-        public System.Windows.Input.ICommand GoPreviousBookCommand { get { return _GoPreviousBookCommand = _GoPreviousBookCommand ?? new Commands.AddNumberToSelectedBook(this, -1); } }
+        public Commands.ICommandEventRaiseable PageVisualAddCommand
+        { get {return _PageVisualAddCommand = _PageVisualAddCommand
+                    ?? new Commands.PageVisualAddCommand(this); } }
+        public Commands.ICommandEventRaiseable PageVisualSetCommand
+        { get { return _PageVisualSetCommand = _PageVisualSetCommand 
+                    ?? new Commands.PageVisualSetCommand(this); } }
+        public Commands.ICommandEventRaiseable PageVisualMaxCommand
+        { get { return _PageVisualMaxCommand = _PageVisualMaxCommand 
+                    ?? new Commands.PageVisualMaxCommand(this); } }
+        public Commands.ICommandEventRaiseable SwapReverseCommand
+        { get { return _SwapReverseCommand = _SwapReverseCommand 
+                    ?? new Commands.CommandBase((a)=> { return true; },
+                    (a)=> { this.Reversed = !this.Reversed; }); } }
+        public Commands.ICommandEventRaiseable AddCurrentPageToBookmarkCommand
+        { get
+            { return _AddCurrentPageToBookmarkCommand = _AddCurrentPageToBookmarkCommand 
+                    ?? new Commands.AddCurrentPageToBookmark(this); } }
+        public System.Windows.Input.ICommand GoNextBookCommand
+        { get { return _GoNextBookCommand = _GoNextBookCommand 
+                    ?? new Commands.AddNumberToSelectedBook(this, 1); } }
+        public System.Windows.Input.ICommand GoPreviousBookCommand
+        { get { return _GoPreviousBookCommand = _GoPreviousBookCommand 
+                    ?? new Commands.AddNumberToSelectedBook(this, -1); } }
 
         public async void Initialize(Books.IBookFixed value, Control target=null)
         {
@@ -54,14 +70,16 @@ namespace BookViewerApp.BookFixed2ViewModels
             for (uint i = 0; i < value.PageCount; i++)
             {
                 uint page = i;
-                pages.Add(new PageViewModel(new Books.VirtualPage(() => { var p = value.GetPage(page); p.Option = option; return p; })));
+                pages.Add(new PageViewModel(new Books.VirtualPage(() => 
+                { var p = value.GetPage(page); p.Option = option; return p; })));
             }
             this._Reversed = false;
             this._PageSelected = 0;
             ID = value.ID;
             this.Pages = pages;
             BookInfo = await BookInfoStorage.GetBookInfoByIDOrCreateAsync(value.ID);
-            this.PageSelected = (bool)SettingStorage.GetValue("SaveLastReadPage") ? (int)(BookInfo?.GetLastReadPage()?.Page ?? 1):1;
+            this.PageSelected = (bool)SettingStorage.GetValue("SaveLastReadPage")
+                ? (int)(BookInfo?.GetLastReadPage()?.Page ?? 1):1;
             this.Reversed = BookInfo?.PageReversed ?? false;
             OnPropertyChanged(nameof(Reversed));
             this.AsBookShelfBook = null;
@@ -75,20 +93,36 @@ namespace BookViewerApp.BookFixed2ViewModels
 
         private Books.PageOptionsControl OptionCache;
 
-        public BookShelfViewModels.BookViewModel AsBookShelfBook { get { return _AsBookShelfBook; } set { _AsBookShelfBook = value;OnPropertyChanged(nameof(AsBookShelfBook)); } }
+        public BookShelfViewModels.BookViewModel AsBookShelfBook
+        {
+            get { return _AsBookShelfBook; }
+            set { _AsBookShelfBook = value;OnPropertyChanged(nameof(AsBookShelfBook)); }
+        }
+
         private BookShelfViewModels.BookViewModel _AsBookShelfBook;
 
         private BookInfoStorage.BookInfo BookInfo=null;
+
         public void SaveInfo()
         {
-            BookInfo.Bookmarks.Clear();
-            BookInfo.SetLastReadPage((uint)this.PageSelected);
-            foreach (var bm in this.Bookmarks)
+            if (BookInfo != null)
             {
-                if (!bm.AutoGenerated)
-                    BookInfo.Bookmarks.Add(new BookInfoStorage.BookInfo.BookmarkItem() { Page = (uint)bm.Page, Title = bm.Title, Type = BookInfoStorage.BookInfo.BookmarkItem.BookmarkItemType.UserDefined });
+                BookInfo.Bookmarks.Clear();
+                BookInfo.SetLastReadPage((uint)this.PageSelected);
+                foreach (var bm in this.Bookmarks)
+                {
+                    if (!bm.AutoGenerated)
+                        BookInfo.Bookmarks.Add
+                        (new BookInfoStorage.BookInfo.BookmarkItem()
+                          {
+                            Page = (uint)bm.Page,
+                            Title = bm.Title,
+                            Type = BookInfoStorage.BookInfo.BookmarkItem.BookmarkItemType.UserDefined
+                          }
+                        );
+                }
+                BookInfo.PageReversed = this.Reversed;
             }
-            BookInfo.PageReversed = this.Reversed;
         }
 
         public string ID { get { return _ID; } private set { _ID = value;OnPropertyChanged(nameof(ID)); } }
@@ -103,20 +137,25 @@ namespace BookViewerApp.BookFixed2ViewModels
         public int PageSelected
         {
             get { return _PageSelected+1; }
-            set { if (value > PagesCount) return; _PageSelected = value-1; OnPropertyChanged(nameof(PageSelected)); OnPropertyChanged(nameof(PageSelectedVisual)); OnPropertyChanged(nameof(ReadRate)); OnPropertyChanged(nameof(CurrentBookmarkName)); }
+            set { if (value > PagesCount) return; _PageSelected = value-1;
+                OnPropertyChanged(nameof(PageSelected));
+                OnPropertyChanged(nameof(PageSelectedVisual)); OnPropertyChanged(nameof(ReadRate));
+                OnPropertyChanged(nameof(CurrentBookmarkName)); }
         }
         private int _PageSelected = -1;
 
         public int PageSelectedVisual
         {
             get { return Reversed ? Pages.Count() - _PageSelected - 1 : _PageSelected; }
-            set { _PageSelected = Reversed ? Pages.Count() - value - 1 : value; OnPropertyChanged(nameof(PageSelected)); OnPropertyChanged(nameof(PageSelectedVisual)); OnPropertyChanged(nameof(ReadRate)); OnPropertyChanged(nameof(CurrentBookmarkName)); }
+            set { _PageSelected = Reversed ? Pages.Count() - value - 1 : value;
+                OnPropertyChanged(nameof(PageSelected)); OnPropertyChanged(nameof(PageSelectedVisual)); OnPropertyChanged(nameof(ReadRate)); OnPropertyChanged(nameof(CurrentBookmarkName)); }
         }
 
         public ObservableCollection<PageViewModel> Pages
         {
             get { return _Pages; }
-            set { _Pages = value;OnPropertyChanged(nameof(Pages));OnPropertyChanged(nameof(PagesCount)); OnPropertyChanged(nameof(ReadRate)); }
+            set { _Pages = value;OnPropertyChanged(nameof(Pages));
+                OnPropertyChanged(nameof(PagesCount)); OnPropertyChanged(nameof(ReadRate)); }
         }
         private ObservableCollection<PageViewModel> _Pages = new ObservableCollection<PageViewModel>();
 
@@ -159,7 +198,8 @@ namespace BookViewerApp.BookFixed2ViewModels
                     }
                 }
                 if (value == "" || value == null) return;
-                this.Bookmarks.Add(new BookmarkViewModel() { AutoGenerated = false, Page = this.PageSelected, Title = value });
+                this.Bookmarks.Add(new BookmarkViewModel() { AutoGenerated = false,
+                    Page = this.PageSelected, Title = value });
                 BookmarksSort();
                 OnPropertyChanged(nameof(Bookmarks));
             }
