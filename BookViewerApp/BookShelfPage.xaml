@@ -1,0 +1,70 @@
+﻿<Page
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:BookViewerApp"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:BookShelfViewModels="using:BookViewerApp.BookShelfViewModels"
+    x:Class="BookViewerApp.BookShelfPage"
+    mc:Ignorable="d"
+    >
+    <Page.BottomAppBar>
+        <CommandBar>
+            <CommandBar.SecondaryCommands>
+                <AppBarButton x:Uid="ClearAllBookShelf" Icon="Clear" Label="" Click="AppBarButton_Click_ClearBookShelfStorage"/>
+                <AppBarButton x:Uid="Setting" Click="AppBarButton_Click_GoToSetting"/>
+                <AppBarButton x:Uid="AboutThisApp" Click="AppBarButton_Click_GoToInfoPage"/>
+            </CommandBar.SecondaryCommands>
+            <AppBarButton x:Uid="OpenLocalBook" Icon="OpenFile" Label="" Click="AppBarButton_Click_2"/>
+            <AppBarButton x:Uid="AddLocalDirectory" Icon="Folder" Label="" Click="AppBarButton_Click"/>
+        </CommandBar>
+    </Page.BottomAppBar>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <ToggleButton x:Name="HamburgerButton"  Foreground="Black" VerticalAlignment="Top">
+            <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE700;" />
+        </ToggleButton>
+        <Grid Grid.Column="1" Background="Black">
+            <TextBlock Foreground="White" DataContext="{Binding ElementName=BookShelfList, Path=SelectedValue}" Text="{Binding Path=Title}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        </Grid>
+        <SplitView Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" x:Name="SplitView"
+                   DisplayMode="Overlay"
+			IsPaneOpen="{Binding IsChecked, ElementName=HamburgerButton, Mode=TwoWay}" Grid.Row="1" Grid.ColumnSpan="2">
+            <SplitView.Pane>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+
+                    <ListView x:Name="BookShelfList" Grid.Row="1" Grid.Column="1">
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                <Setter Property="Padding" Value="0" />
+                                <Setter Property="Margin" Value="0" />
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <local:BookShelfContainerControl DataContext="{Binding}" Height="200"/>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </Grid>
+            </SplitView.Pane>
+            <local:BookShelfControl DataContext="{Binding ElementName=BookShelfList, Path=SelectedValue}" x:Name="BodyControl"/>
+        </SplitView>
+    </Grid>
+</Page>
