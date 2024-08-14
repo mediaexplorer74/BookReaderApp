@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" IgnorableNamespaces="uap mp">
-  <Identity Name="6269kurema.BookViewer" Publisher="CN=5E93616C-E6FD-4F3F-9466-8AC306D36152" Version="1.1.0.0" />
-  <mp:PhoneIdentity PhoneProductId="eb9ec3e8-0be7-45bc-bcc3-5421e94f8ace" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
+  <Identity Name="6269kurema.BookViewer" Publisher="CN=Admin" Version="1.1.0.0" />
+  <mp:PhoneIdentity PhoneProductId="eb91c3e1-0be7-45bc-bcc6-5421a94f8ace" PhonePublisherId="00054300-4400-0370-0580-000000060000" />
   <Properties>
-    <DisplayName>BookViewer</DisplayName>
+   <DisplayName>BookViewer</DisplayName>
     <PublisherDisplayName>kurema</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
@@ -22,6 +22,10 @@
           </uap:ShowNameOnTiles>
         </uap:DefaultTile>
         <uap:SplashScreen Image="Assets\SplashScreen.png" BackgroundColor="#135C31" />
+        <uap:InitialRotationPreference>
+          <uap:Rotation Preference="landscape"/>
+          <uap:Rotation Preference="portrait"/>
+          <uap:Rotation Preference="landscapeFlipped"/></uap:InitialRotationPreference>
       </uap:VisualElements>
       <Extensions>
         <uap:Extension Category="windows.fileTypeAssociation">
